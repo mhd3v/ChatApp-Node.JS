@@ -19,6 +19,26 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => { //register an event listener. Callback gets called with the socket
     console.log('New user connected!');
 
+    // socket.emit('newEmail', {   //trigger custom event, with custom object
+    //     from: 'mhd',
+    //     text: 'Hey, whats up',
+    //     createdAt: 24
+    // });
+
+    socket.emit('newMessage', {            //trigger new message event
+        createdAt: new Date().getDate(),
+        from: 'mhd',
+        text: 'whats going on'
+    });
+
+    socket.on('createMessage', (msg) => {   //listening for create new message event from client
+        console.log('Creating message', msg)
+    });
+
+    // socket.on('createEmail', (newEmail) => {    //listener for custom event from the client
+    //     console.log('createEmail', newEmail);
+    // });
+
     socket.on('disconnect', (socket) => { //register an event listener. Callback gets called with the socket
         console.log('User was disconnected!');
     });
