@@ -23,11 +23,17 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => { //register an event listener. Callback gets called with the socket
     console.log('New user connected!');
 
-    // socket.emit('newEmail', {   //trigger custom event, with custom object
-    //     from: 'mhd',
-    //     text: 'Hey, whats up',
-    //     createdAt: 24
-    // });
+    socket.emit('newMessage', {    //what the joined user sees
+        from: 'Admin',
+        text: 'Welcome to the chat app',
+        createdAt: new Date().getTime()
+    });
+
+    socket.broadcast.emit('newMessage', {  //what other user sees (except the joined user)
+        from: 'Admin',
+        text: 'New user joined',
+        createdAt: new Date().getTime()
+    });
 
     socket.on('createMessage', (msg) => {   //listening for create new message event from client
 
@@ -37,7 +43,17 @@ io.on('connection', (socket) => { //register an event listener. Callback gets ca
             from: msg.from,
             text: msg.text,
             createdAt: new Date().getTime()
-        });                            
+        });          
+        
+        //============== Broadcasting events (send events to certain sockets) ===================   
+
+        // socket.broadcast.emit('newMessage', {   //send event to all sockets except the socket that has called broadcast.emit
+        //     from: msg.from,
+        //     text: msg.text,
+        //     createdAt: new Date().getTime()
+        // });  
+        
+        //=======================================================================================
     });
 
     // socket.on('createEmail', (newEmail) => {    //listener for custom event from the client
