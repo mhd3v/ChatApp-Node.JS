@@ -16,6 +16,10 @@ var io = socketIO(server);  //we get web sockets server in io
 
 app.use(express.static(publicPath));
 
+//io.on is a special function. We will use socket.xx() for most of our functionality
+//io.on('connect') DOESN'T exist
+//socket.on('connect') is a valid event
+
 io.on('connection', (socket) => { //register an event listener. Callback gets called with the socket
     console.log('New user connected!');
 
@@ -25,14 +29,15 @@ io.on('connection', (socket) => { //register an event listener. Callback gets ca
     //     createdAt: 24
     // });
 
-    socket.emit('newMessage', {            //trigger new message event
-        createdAt: new Date().getDate(),
-        from: 'mhd',
-        text: 'whats going on'
-    });
-
     socket.on('createMessage', (msg) => {   //listening for create new message event from client
+
         console.log('Creating message', msg)
+
+        io.emit('newMessage', {              //io.emit() emits an event to all the connections, socket.emit() emits an event to a single connection
+            from: msg.from,
+            text: msg.text,
+            createdAt: new Date().getTime()
+        });                            
     });
 
     // socket.on('createEmail', (newEmail) => {    //listener for custom event from the client
