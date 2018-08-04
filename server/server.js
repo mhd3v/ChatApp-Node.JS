@@ -29,11 +29,13 @@ io.on('connection', (socket) => { //register an event listener. Callback gets ca
     
     socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));  //what other user sees (except the joined user)
 
-    socket.on('createMessage', (msg) => {   //listening for create new message event from client
+    socket.on('createMessage', (msg, callback) => {   //listening for create new message event from client. Callback is the callback function to be called on the client
 
         console.log('Creating message', msg)
 
-        io.emit('newMessage',generateMessage(msg.from, msg.text));              //io.emit() emits an event to all the connections, socket.emit() emits an event to a single connection
+        io.emit('newMessage',generateMessage(msg.from, msg.text));   //io.emit() emits an event to all the connections, socket.emit() emits an event to a single connection
+
+        callback('Server got your message');
         
         //============== Broadcasting events (send events to certain sockets) ===================   
 
