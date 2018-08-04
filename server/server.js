@@ -3,6 +3,8 @@ const http = require('http'); //built in node module, used by express to setup t
 const express = require('express');
 const socketIO = require('socket.io');
 
+const {generateMessage} = require('./utils/message');
+
 const publicPath = path.join(__dirname, "../public");   //better way to do than the one below
 const port = process.env.PORT || 3000;
 
@@ -23,27 +25,15 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => { //register an event listener. Callback gets called with the socket
     console.log('New user connected!');
 
-    socket.emit('newMessage', {    //what the joined user sees
-        from: 'Admin',
-        text: 'Welcome to the chat app',
-        createdAt: new Date().getTime()
-    });
-
-    socket.broadcast.emit('newMessage', {  //what other user sees (except the joined user)
-        from: 'Admin',
-        text: 'New user joined',
-        createdAt: new Date().getTime()
-    });
+    socket.emit('newMessage', generateMessage('Admin','Welcome to the chat app'));   //what the joined user sees
+    
+    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));  //what other user sees (except the joined user)
 
     socket.on('createMessage', (msg) => {   //listening for create new message event from client
 
         console.log('Creating message', msg)
 
-        io.emit('newMessage', {              //io.emit() emits an event to all the connections, socket.emit() emits an event to a single connection
-            from: msg.from,
-            text: msg.text,
-            createdAt: new Date().getTime()
-        });          
+        io.emit('newMessage',generateMessage(msg.from, msg.text));              //io.emit() emits an event to all the connections, socket.emit() emits an event to a single connection
         
         //============== Broadcasting events (send events to certain sockets) ===================   
 
