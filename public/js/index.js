@@ -17,13 +17,25 @@ socket.on('disconnect', function() {
 socket.on('newMessage', function(newMessage){       //listening for new message event from server
     console.log('New message arrived', newMessage);
 
-    var li = jQuery('<li></li>');   //define a new li
+    var li = jQuery('<li></li>');   //define a new li    //can use $ instead
     li.text(`${newMessage.from}: ${newMessage.text}`);
 
-    jQuery('#messages').append(li);
+    jQuery('#messages').append(li);        
 });
 
+socket.on('newLocationMessage', function(message){
+    var li = $('<li></li>');   //define a new li    //can use $ instead
+    var a = $('<a target="_blank">My current location</a>');
 
+    li.text(`${message.from}: `);
+    a.attr('href', message.url);    //if attr is provided two arguments, the first argument's will be set. If one argument is provided, the value for it is returned
+
+    //a.attr('href') -> will return a's href value
+    //a.attr('href', 'www.com'); will set a's href value
+
+    li.append(a);
+    $('#messages').append(li);      
+});
 
 jQuery('#message-form').on('submit', function(e) {
     e.preventDefault(); //stop page from refreshing
@@ -35,3 +47,27 @@ jQuery('#message-form').on('submit', function(e) {
         console.log('Response from server: ', data);
     });
 });
+
+var locationButton = jQuery('#send-location');
+
+locationButton.on('click', function(){
+
+    //using geolocation api, available in most modern browsers
+
+    if(!navigator.geolocation){ //check if user has access to geolocation api
+        return alert('Geolocation not supported by your browser');
+    }  
+
+    navigator.geolocation.getCurrentPosition(function (position){       //first argument -> success case function, second argument -> failure case function
+        // console.log(position);
+
+        socket.emit('createLocationMessage', {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        });
+
+    }, function() {
+        alert('Unable to fetch location');
+    });
+
+}); 

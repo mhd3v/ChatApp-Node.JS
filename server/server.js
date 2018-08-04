@@ -4,6 +4,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 
 const {generateMessage} = require('./utils/message');
+const {generateLocationMessage} = require('./utils/message');
 
 const publicPath = path.join(__dirname, "../public");   //better way to do than the one below
 const port = process.env.PORT || 3000;
@@ -48,9 +49,9 @@ io.on('connection', (socket) => { //register an event listener. Callback gets ca
         //=======================================================================================
     });
 
-    // socket.on('createEmail', (newEmail) => {    //listener for custom event from the client
-    //     console.log('createEmail', newEmail);
-    // });
+    socket.on('createLocationMessage', (coords) => {
+        io.emit('newLocationMessage', generateLocationMessage('lOl', coords.latitude, coords.longitude));
+    });
 
     socket.on('disconnect', (socket) => { //register an event listener. Callback gets called with the socket
         console.log('User was disconnected!');
