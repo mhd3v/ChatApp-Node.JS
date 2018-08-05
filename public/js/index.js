@@ -1,5 +1,20 @@
 var socket = io();   //intitiate request to socket.io server, to open up a socket and keep that socket open
 
+function scrollToBottom() {
+    //Selectors
+    var messages = $('#messages');
+    var newMessage = messages.children('li:last-child');  //get newest message
+    //Heights
+    var clientHeight = messages.prop('clientHeight');
+    var scrollTop = messages.prop('scrollTop');
+    var scrollHeight = messages.prop('scrollHeight');
+    var newMessageHeight = newMessage.innerHeight();
+    var lastMessageHeight = newMessage.prev().innerHeight(); //get height of second last message
+
+    if(clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight)
+        messages.scrollTop(scrollHeight);
+}
+
 socket.on('connect', function() {
     console.log('Connected to server');
 
@@ -28,6 +43,8 @@ socket.on('newMessage', function(newMessage){       //listening for new message 
 
     $("#messages").append(html);    //we're rendering lis and sending it to the ol -> messages.
 
+    scrollToBottom();
+
     //=============== Not a good way to add new elements on the document using only jQuery =================
 
     // console.log('New message arrived', newMessage);
@@ -52,6 +69,8 @@ socket.on('newLocationMessage', function(message){
     });
 
     $("#messages").append(html); 
+
+    scrollToBottom();
 
     //=============== Not a good way to add new elements on the document using only jQuery =================
     // var formattedTime = moment(message.createdAt).format('h:mm a');
