@@ -15,31 +15,59 @@ socket.on('disconnect', function() {
 });
 
 socket.on('newMessage', function(newMessage){       //listening for new message event from server
-    console.log('New message arrived', newMessage);
+
+    //=============== Adding new elements on the document via mustache =================
 
     var formattedTime = moment(newMessage.createdAt).format('h:mm a');
+    var template = $('#message-template').html();
+    var html = Mustache.render(template, {      //second argument is used to send data
+        text: newMessage.text,
+        from: newMessage.from,
+        createdAt: formattedTime
+    });
 
-    var li = jQuery('<li></li>');   //define a new li    //can use $ instead
-    li.text(`${newMessage.from} ${formattedTime}: ${newMessage.text}`);
+    $("#messages").append(html);    //we're rendering lis and sending it to the ol -> messages.
 
-    jQuery('#messages').append(li);        
+    //=============== Not a good way to add new elements on the document using only jQuery =================
+
+    // console.log('New message arrived', newMessage);
+    // var formattedTime = moment(newMessage.createdAt).format('h:mm a');
+    // var li = jQuery('<li></li>');   //define a new li    //can use $ instead
+    // li.text(`${newMessage.from} ${formattedTime}: ${newMessage.text}`);
+    // jQuery('#messages').append(li);        
+
 });
 
 socket.on('newLocationMessage', function(message){
+    
+    //=============== Adding new elements on the document via mustache =================
 
     var formattedTime = moment(message.createdAt).format('h:mm a');
 
-    var li = $('<li></li>');   //define a new li    //can use $ instead
-    var a = $('<a target="_blank">My current location</a>');
+    var template = $("#location-message-template").html();
+    var html = Mustache.render(template, {
+        from: message.from,
+        url: message.url,
+        createdAt: formattedTime
+    });
 
-    li.text(`${message.from} ${formattedTime}: `);
-    a.attr('href', message.url);    //if attr is provided two arguments, the first argument's will be set. If one argument is provided, the value for it is returned
+    $("#messages").append(html); 
 
-    //a.attr('href') -> will return a's href value
-    //a.attr('href', 'www.com'); will set a's href value
+    //=============== Not a good way to add new elements on the document using only jQuery =================
+    // var formattedTime = moment(message.createdAt).format('h:mm a');
 
-    li.append(a);
-    $('#messages').append(li);      
+    // var li = $('<li></li>');   //define a new li    //can use $ instead
+    // var a = $('<a target="_blank">My current location</a>');
+
+    // li.text(`${message.from} ${formattedTime}: `);
+    // a.attr('href', message.url);    //if attr is provided two arguments, the first argument's will be set. If one argument is provided, the value for it is returned
+
+    // //a.attr('href') -> will return a's href value
+    // //a.attr('href', 'www.com'); will set a's href value
+
+    // li.append(a);
+    // $('#messages').append(li);    
+    
 });
 
 jQuery('#message-form').on('submit', function(e) {

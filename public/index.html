@@ -27,13 +27,45 @@
         </div>
         
     </div>
+
+    <script id="message-template" type="text/template">
+        <!-- data coming from mustache -->
+        <li class="message">
+
+            <div class="message__title">
+                <h4>{{from}}</h4>
+                <span>{{createdAt}}</span>
+            </div>
+
+            <div class="message__body">
+                <p>{{text}}</p>
+            </div>
+        </li>
+    </script>
     
+    <script id="location-message-template" type="text/template">
+        <!-- data coming from mustache -->
+        <li class="message">
+
+            <div class="message__title">
+                <h4>{{from}}</h4>
+                <span>{{createdAt}}</span>
+            </div>
+
+            <div class="message__body">
+                <p>
+                    <a href="{{url}}" target="_blank">My current location</a>
+                </p>
+            </div>
+        </li>
+    </script>
     
     <!-- socket.io libary is imported when we setup socket.io for our server -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/libs/jquery-3.3.1.min.js"></script>
     <!-- got moment libary from node_modules. (moments is installed via NPM) -->
     <script src="/libs/moment.js"></script>
+    <script src="/libs/mustache.js"></script>
     <script src="/js/index.js"></script>
 </body>
 </html>
