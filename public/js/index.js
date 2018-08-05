@@ -17,17 +17,22 @@ socket.on('disconnect', function() {
 socket.on('newMessage', function(newMessage){       //listening for new message event from server
     console.log('New message arrived', newMessage);
 
+    var formattedTime = moment(newMessage.createdAt).format('h:mm a');
+
     var li = jQuery('<li></li>');   //define a new li    //can use $ instead
-    li.text(`${newMessage.from}: ${newMessage.text}`);
+    li.text(`${newMessage.from} ${formattedTime}: ${newMessage.text}`);
 
     jQuery('#messages').append(li);        
 });
 
 socket.on('newLocationMessage', function(message){
+
+    var formattedTime = moment(message.createdAt).format('h:mm a');
+
     var li = $('<li></li>');   //define a new li    //can use $ instead
     var a = $('<a target="_blank">My current location</a>');
 
-    li.text(`${message.from}: `);
+    li.text(`${message.from} ${formattedTime}: `);
     a.attr('href', message.url);    //if attr is provided two arguments, the first argument's will be set. If one argument is provided, the value for it is returned
 
     //a.attr('href') -> will return a's href value
