@@ -23,6 +23,18 @@ socket.on('connect', function() {
     //     text: "hey!"
     // })
 
+    var params = $.deparam(window.location.search);
+
+    socket.emit('join', params, function(err) {
+        if(err){
+            window.alert(err);
+            window.location.href = "/";
+        }
+        else{
+            console.log('no error');
+        }
+    });
+
 });
 
 socket.on('disconnect', function() {
